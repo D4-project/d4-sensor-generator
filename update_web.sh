@@ -3,7 +3,7 @@
 set -e
 
 BOOTSTRAP_VERSION='4.2.1'
-FONT_AWESOME_VERSION='4.7.0'
+FONT_AWESOME_VERSION='5.7.1'
 
 if [ ! -d static/css ]; then
   mkdir static/css
@@ -20,7 +20,7 @@ mkdir temp
 
 wget https://github.com/twbs/bootstrap/releases/download/v${BOOTSTRAP_VERSION}/bootstrap-${BOOTSTRAP_VERSION}-dist.zip -O temp/bootstrap${BOOTSTRAP_VERSION}.zip
 
-wget https://github.com/FortAwesome/Font-Awesome/archive/v${FONT_AWESOME_VERSION}.zip -O temp/FONT_AWESOME_${FONT_AWESOME_VERSION}.zip
+wget https://github.com/FortAwesome/Font-Awesome/archive/5.7.1.zip -O temp/FONT_AWESOME_${FONT_AWESOME_VERSION}.zip
 wget https://github.com/FezVrasta/popper.js/archive/v1.14.3.zip -O temp/popper.zip
 
 # dateRangePicker
@@ -42,10 +42,9 @@ mv temp/bootstrap-${BOOTSTRAP_VERSION}-dist/css/bootstrap.min.css.map ./static/c
 mv temp/popper.js-1.14.3/dist/umd/popper.min.js ./static/js/
 mv temp/popper.js-1.14.3/dist/umd/popper.min.js.map ./static/js/
 
-mv temp/Font-Awesome-${FONT_AWESOME_VERSION} temp/font-awesome
-
-rm -rf ./static/fonts/ ./static/font-awesome/
-mv temp/font-awesome/ ./static/
+rm -rf ./static/webfonts/
+mv temp/Font-Awesome-${FONT_AWESOME_VERSION}/css/all.min.css ./static/css/font-awesome.min.css
+mv temp/Font-Awesome-${FONT_AWESOME_VERSION}/webfonts ./static/webfonts
 
 mv temp/jquery-date-range-picker-0.18.0/dist/daterangepicker.min.css ./static/css/
 
