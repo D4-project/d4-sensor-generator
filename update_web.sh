@@ -66,7 +66,7 @@ wget https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js -O ./static/
 wget https://raw.githubusercontent.com/D4-project/architecture/master/format/type.json -O ./static/json/type.json
 
 #get Images
-pushd static/image
+pushd static/img
 wget -q https://raw.githubusercontent.com/D4-project/d4-core/master/client/media/d4c-client.png -O d4c-client.png
 wget -q https://raw.githubusercontent.com/D4-project/d4-goclient/master/media/gopherd4.png -O gopherd4.png
 popd
