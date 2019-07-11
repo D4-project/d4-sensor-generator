@@ -11,17 +11,15 @@ if [ -z "$VIRTUAL_ENV" ]; then
     echo export D4G_HOME=$(pwd) >> ./D4GENV/bin/activate
     . ./D4GENV/bin/activate
 fi
-python3 -m pip install -r requirement.txt
-
-# pushd web/
-# ./update_web.sh
-# popd
-
 
 python3 -m pip install -r requirement.txt
 
-git clone https://github.com/D4-project/d4-core.git
-git clone https://github.com/D4-project/d4-goclient.git
+if [ ! -d d4-core ]; then
+  git clone https://github.com/D4-project/d4-core.git
+fi
+if [ ! -d d4-goclient ]; then
+  git clone https://github.com/D4-project/d4-goclient.git
+fi
 
 pushd d4-goclient
 gox -output="../exe_goclient/d4-goclient_{{.OS}}_{{.Arch}}"
@@ -35,3 +33,5 @@ pushd redis/
 git checkout 5.0
 make
 popd
+
+./update_web.sh
