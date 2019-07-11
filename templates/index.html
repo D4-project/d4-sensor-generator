@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>D4-Project</title>
+	<link rel="icon" href="{{ url_for('static', filename='img/d4-logo.png')}}">
+	<!-- Core CSS -->
+	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet">
+
+	<!-- JS -->
+	<script src="{{ url_for('static', filename='js/jquery.js')}}"></script>
+	<script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+
+</head>
+
+<body>
+
+	<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+		<a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='img/d4-logo.png')}}" alt="D4 Project" style="width:80px;">
+    </a>
+	  <ul class="navbar-nav">
+	    <li class="nav-item active">
+	      <a class="nav-link mr-3" href="{{ url_for('index') }}">Home <span class="sr-only">(current)</span></a>
+	    </li>
+	  </ul>
+	</nav>
+
+		<div class="row">
+			<div class="col-lg-3 col-md-1"></div>
+			<div class="col-lg-6 col-md-10">
+
+				<p class="mt-4" style="font-size: 18px;">
+					Deploy a sensor, one needs to run an executable with a specific
+					configuration. This task is simplified by the use of the present tool
+					that produces a boilerplate environment for a d4-client.
+
+				</p>
+
+				<table class="table table-borderless mb-4">
+					<thead>
+						<tr>
+				      <td>You only need to specify:</td>
+				    </tr>
+					</thead>
+				  <tbody>
+				    <tr>
+				      <th class="text-center"><i class="fas fa-code" style="color: #00637c"></i></th>
+				      <td>Whether you prefer to use the lightweight C client or the Go client</td>
+				    </tr>
+				    <tr>
+				      <th class="text-center"><i class="fas fa-desktop" style="color: #00637c"></i></th>
+				      <td>Your architecture / OS</td>
+				    </tr>
+				    <tr>
+				      <th class="text-center"><i class="far fa-file-alt" style="color: #00637c"></th>
+				      <td>The type of data you want to ship</td>
+				    </tr>
+						<tr>
+				      <th class="text-center"><i class="fas fa-server" style="color: #00637c"></i></th>
+				      <td>The destination server</td>
+				    </tr>
+				  </tbody>
+				</table>
+
+				<p style="font-size: 18px;">
+
+					If you do not want to host your own D4-server you can choose to use
+					crq.circl.lu
+
+					<br><br>
+
+					If you fill in your email address, CIRCL will send you API credentials
+					to access our APIs (eg. passiveDNS). Every valid packet you send to crq
+					grant you additional quota for querying our APIs!
+				</p>
+
+				<div class="text-center">
+					<a href="{{ url_for('client') }}" class="btn btn-primary btn-lg">
+						Register And Download A Sensor
+					</a>
+				</div>
+			</div>
+			<div class="col-lg-3 col-md-1"></div>
+		</div>
+
+		<br><br>
+
+	{% include 'navfooter.html' %}
+</body>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>D4-Project</title>
+	<link rel="icon" href="{{ url_for('static', filename='img/d4-logo.png')}}">
+	<!-- Core CSS -->
+	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet">
+
+	<!-- JS -->
+	<script src="{{ url_for('static', filename='js/jquery.js')}}"></script>
+	<script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+
+	<style>
+	.ProgressBar {
+margin: 0 auto;
+padding: 2em 0 3em;
+list-style: none;
+position: relative;
+display: flex;
+justify-content: space-between;
+}
+.ProgressBar-step {
+text-align: center;
+position: relative;
+width: 100%;
+}
+.ProgressBar-step:before, .ProgressBar-step:after {
+content: "";
+height: 0.5em;
+background-color: #9f9fa3;
+position: absolute;
+z-index: 1;
+width: 100%;
+left: -50%;
+top: 50%;
+transform: translateY(-50%);
+transition: all 0.25s ease-out;
+}
+.ProgressBar-step:first-child:before, .ProgressBar-step:first-child:after {
+display: none;
+}
+.ProgressBar-step:after {
+background-color: #00637c;
+width: 0%;
+}
+.ProgressBar-step.is-complete + .ProgressBar-step.is-current:after, .ProgressBar-step.is-complete + .ProgressBar-step.is-complete:after {
+width: 100%;
+}
+.ProgressBar-icon {
+width: 1.5em;
+height: 1.5em;
+background-color: #9f9fa3;
+fill: #9f9fa3;
+border-radius: 50%;
+padding: 0.5em;
+max-width: 100%;
+z-index: 10;
+position: relative;
+transition: all 0.25s ease-out;
+}
+.is-current .ProgressBar-icon {
+fill: #00637c;
+background-color: #00637c;
+}
+.is-complete .ProgressBar-icon {
+fill: #dbf1ff;
+background-color: #00637c;
+}
+.ProgressBar-stepLabel {
+display: block;
+text-transform: uppercase;
+color: #9f9fa3;
+position: absolute;
+margin-top: -3em;
+width: 100%;
+transition: all 0.25s ease-out;
+}
+
+.ProgressBar-stepLabel2 {
+display: block;
+text-transform: uppercase;
+color: #9f9fa3;
+position: absolute;
+padding-top: 0.2em;
+width: 100%;
+transition: all 0.25s ease-out;
+}
+
+.is-current > .ProgressBar-stepLabel, .is-complete > .ProgressBar-stepLabel {
+  color: #00637c;
+}
+
+.is-current > .ProgressBar-stepLabel2, .is-complete > .ProgressBar-stepLabel2 {
+  color: #00637c;
+}
+
+	</style>
+
+</head>
+
+<body>
+
+	<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+		<a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='img/d4-logo.png')}}" alt="D4 Project" style="width:80px;">
+    </a>
+	  <ul class="navbar-nav">
+	    <li class="nav-item active">
+	      <a class="nav-link mr-3" href="{{ url_for('index') }}">Home <span class="sr-only">(current)</span></a>
+	    </li>
+	  </ul>
+	</nav>
+
+	<svg xmlns="http://www.w3.org/2000/svg" hidden>
+	  <symbol id="checkmark-bold" viewBox="0 0 24 24">
+	    <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"/>
+	  </symbol>
+	</svg>
+
+		<div>
+
+			<ol class="ProgressBar">
+			  <li class="ProgressBar-step is-current">
+			    <svg class="ProgressBar-icon"><use xlink:href="#checkmark-bold"></use></svg>
+			    <span class="ProgressBar-stepLabel"><i class="fas fa-code"></i></span>
+					<span class="ProgressBar-stepLabel2">D4-Client</span>
+			  </li>
+				<li class="ProgressBar-step">
+			    <svg class="ProgressBar-icon"><use xlink:href="#checkmark-bold"></use></svg>
+			    <span class="ProgressBar-stepLabel"><i class="fas fa-desktop"></i></i></span>
+					<span class="ProgressBar-stepLabel2">OS</span>
+			  </li>
+			  <li class="ProgressBar-step">
+			    <svg class="ProgressBar-icon"><use xlink:href="#checkmark-bold"></use></svg>
+			    <span class="ProgressBar-stepLabel"><i class="far fa-file-alt"></i></i></span>
+					<span class="ProgressBar-stepLabel2">DATA Type</span>
+			  </li>
+			  <li class="ProgressBar-step">
+			    <svg class="ProgressBar-icon"><use xlink:href="#checkmark-bold"></use></svg>
+			    <span class="ProgressBar-stepLabel"><i class="fas fa-server"></i></span>
+					<span class="ProgressBar-stepLabel2">Destination</span>
+			  </li>
+			</ol>
+
+
+			<div class="text-center"id="div-d4-client">
+				<h4 class="card-title">Choose a D4-Client</h4>
+				<div class="row mx-0">
+					<div class="col-lg-6 text-center mt-4">
+						<a href="{{ url_for('type')}}?d4_client=c" class="btn btn-outline-dark">
+							<img src="{{ url_for('static', filename='img/d4c-client.png')}}" alt="Go Client">
+
+							<ul class="list-group mt-3 mb-1 text-dark">
+							  <li class="list-group-item d-flex justify-content-between align-items-center">
+							    Written in C
+							    <span class="badge badge-primary badge-pill">C</span>
+							  </li>
+							  <li class="list-group-item d-flex justify-content-between align-items-center text-danger">
+							    Support Type 2/254: meta headers (JSON)
+							    <span class="badge badge-danger badge-pill"><i class="fas fa-times"></i></span>
+							  </li>
+							  <li class="list-group-item d-flex justify-content-between align-items-center">
+							    Pre-compiled client
+							    <span class="badge badge-info badge-pill"><i class="fas fa-times"></i></span>
+							  </li>
+							</ul>
+
+						</a>
+
+					</div>
+					<div class="col-lg-6 text-center mt-4">
+						<a href="{{ url_for('go_client')}}?d4_client=go" class="btn btn-outline-dark">
+							<img src="{{ url_for('static', filename='img/gopherd4.png')}}" alt="Go Client">
+
+							<ul class="list-group mt-3 mb-1 text-dark">
+							  <li class="list-group-item d-flex justify-content-between align-items-center">
+							    Written in GO
+							    <span class="badge badge-primary badge-pill">GO</span>
+							  </li>
+							  <li class="list-group-item d-flex justify-content-between align-items-center text-success">
+							    Support Type 2/254: meta headers (JSON)
+							    <span class="badge badge-success badge-pill"><i class="fas fa-check"></i></span>
+							  </li>
+							  <li class="list-group-item d-flex justify-content-between align-items-center">
+							    Pre-compiled versions:
+							    <span class="badge badge-info badge-pill"><i class="fas fa-check"></i></span>
+							  </li>
+							</ul>
+						</a>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+
+	{% include 'navfooter.html' %}
+</body>

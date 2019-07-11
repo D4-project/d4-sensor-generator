@@ -102,3 +102,20 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+
+#d4-client
+d4-core
+d4-goclient
+exe_goclient
+sha256sum.txt
+
+#ENV
+D4GENV
+
+#web
+static
+
+#redis
+redis
+dump7201.rdb
