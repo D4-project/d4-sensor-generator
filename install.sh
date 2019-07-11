@@ -24,6 +24,9 @@ fi
 pushd d4-goclient
 gox -output="../exe_goclient/d4-goclient_{{.OS}}_{{.Arch}}"
 sleep 5
+pop
+
+pushd exe_goclient
 find . -type f -exec sha256sum {} \; > ../sha256sum.txt
 popd
 
