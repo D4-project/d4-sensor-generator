@@ -44,7 +44,7 @@ def generate_uuid():
     return str(uuid.uuid4())
 
 def generate_secret_key():
-    return secrets.token_bytes(256)
+    return secrets.token_urlsafe(256)
 
 def is_valid_ip(ip):
     try:
