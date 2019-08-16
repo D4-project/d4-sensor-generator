@@ -11,8 +11,27 @@ import redis
 import flask
 import secrets
 import datetime
+import requests
 import ipaddress
 import configparser
+
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+import logging
+import logging.handlers
+
+root = logging.getLogger()
+
+log_filename = 'logs/sensor-generator.log'
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+handler_log = logging.handlers.TimedRotatingFileHandler(log_filename, when="midnight", interval=1)
+handler_log.suffix = '%Y-%m-%d.log'
+handler_log.setFormatter(formatter)
+handler_log.setLevel(logging.DEBUG)
+root.addHandler(handler_log)
 
 from io import BytesIO
 import zipfile
@@ -30,6 +49,9 @@ config_file_server = os.path.join(os.environ['D4G_HOME'], 'configs/server.conf')
 config_server = configparser.ConfigParser()
 config_server.read(config_file_server)
 
+D4_API_KEY = config_server['D4_API'].get('D4_API_KEY')
+D4_Server = config_server['D4_API'].get('D4_Server')
+
 with open(json_type_description_path, 'r') as f:
     json_type = json.loads(f.read())
 json_type_description = {}
@@ -38,6 +60,10 @@ for type_info in json_type:
 
 app = Flask(__name__, static_url_path=baseUrl+'/static/')
 app.config['MAX_CONTENT_LENGTH'] = 900 * 1024 * 1024
+
+
+email_regex = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}'
+email_regex = re.compile(email_regex)
 
 # ========== FUNCTIONS ============
 def generate_uuid():
@@ -53,8 +79,24 @@ def is_valid_ip(ip):
     except ValueError:
         return False
 
+def check_email(email):
+    result = email_regex.match(email)
+    if result:
+        return True
+    else:
+        return False
+
 def get_json_type_description():
     return json_type_description.copy()
+
+def register_sensor_via_api(sensor_uuid, hmac_key, mail=None):
+    res = requests.post("{}/api/v1/add/sensor/register".format(D4_Server), json={"uuid": sensor_uuid, "hmac_key": hmac_key}, headers={'Authorization': D4_API_KEY}, verify=False)
+    print(res.status_code)
+
+    if res.status_code == 200:
+        root.info('Sensor registred, uuid: {}'.format(sensor_uuid))
+    else:
+        root.error(res.json())
 
 def create_go_client_zip():
 
@@ -91,7 +133,7 @@ def create_c_client_zip():
 # type
 # uuid
 # version
-def create_config_file(UUID, d4_type, destination, d4_client='go', os_client=None, arch=None):
+def create_config_file(UUID, d4_type, destination, key, d4_client='go', os_client=None, arch=None):
 
     snaplen = b'4096'
     version = b'1'
@@ -104,8 +146,6 @@ def create_config_file(UUID, d4_type, destination, d4_client='go', os_client=Non
             d4_type = 8
     except:
         d4_type = 8
-
-    key = generate_secret_key()
 
     if d4_client=='c':
         dirname = 'client'
@@ -132,7 +172,7 @@ def create_config_file(UUID, d4_type, destination, d4_client='go', os_client=Non
     with zipfile.ZipFile(zip_buffer, "a") as zf:
 
         zf.writestr( '{}/configs/destination'.format(dirname), BytesIO(destination.encode()).getvalue())
-        zf.writestr( '{}/configs/key'.format(dirname), BytesIO(key).getvalue())
+        zf.writestr( '{}/configs/key'.format(dirname), BytesIO(key.encode()).getvalue())
         zf.writestr( '{}/configs/snaplen'.format(dirname), BytesIO(snaplen).getvalue())
         zf.writestr( '{}/configs/source'.format(dirname), BytesIO(source).getvalue())
         zf.writestr( '{}/configs/type'.format(dirname), BytesIO(str(d4_type).encode()).getvalue())
@@ -233,9 +273,12 @@ def download_page():
 @app.route('/download', methods=['GET'])
 def download():
 
+    ip_address = request.remote_addr
+
     d4_client = request.args.get('d4_client')
     d4_type = request.args.get('type')
     destination = request.args.get('destination')
+    mail = request.args.get('mail')
 
     os_client = request.args.get('os')
     arch = request.args.get('arch')
@@ -255,21 +298,34 @@ def download():
 
 
     UUID = generate_uuid()
-    type = 1
+    key = generate_secret_key()
 
     filename = 'd4-sensor-client.zip'
+
+    message = 'New Sensor created, uuid:{}, ip:{}, type:{}, destination:{}, client:{}'.format(UUID, ip_address, d4_type, destination, d4_client)
+    if mail:
+        message = message + ', mail:{}'.format(mail)
+    if os_client:
+        message = message + ', os:{}, arch:{}'.format(os_client, arch)
+
+    root.warning(message)
 
     if d4_client=='c':
         zip_file0= create_c_client_zip()
     else:
         zip_file0= create_go_client_zip()
-    zip_file= create_config_file(UUID, type, destination, d4_client=d4_client, os_client=os_client, arch=arch)
+    zip_file= create_config_file(UUID, d4_type, destination, key, d4_client=d4_client, os_client=os_client, arch=arch)
 
     with zipfile.ZipFile(zip_file0, "a") as zf:
         with zipfile.ZipFile(zip_file, "a") as zfc:
             [zfc.writestr(t[0], t[1].read()) for t in ((n, zf.open(n)) for n in zf.namelist())]
 
     zip_file.seek(0)
+
+    # register sensor
+    if destination == 'default':
+        register_sensor_via_api(UUID, key)
+
     return send_file(zip_file, attachment_filename=filename, as_attachment=True)
 
 if __name__ == "__main__":

@@ -21,6 +21,12 @@ if [ ! -d d4-goclient ]; then
   git clone https://github.com/D4-project/d4-goclient.git
 fi
 
+pushd configs
+  cp server.conf.sample server.conf
+pop
+
+mkdir logs
+
 pushd d4-goclient
 gox -output="../exe_goclient/d4-goclient_{{.OS}}_{{.Arch}}"
 sleep 5
