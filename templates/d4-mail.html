@@ -177,7 +177,7 @@ transition: all 0.25s ease-out;
 				<br>
 				<br>
 
-				<a class="btn btn-secondary" href="#">Ignore This Step</a>
+				<a class="btn btn-secondary" href="{{ url_for('download_page')}}?d4_client={{d4_client}}&type={{d4_type}}&destination={{destination}}{%if os_client%}&os={{os_client}}&arch={{arch}}{%endif%}">Ignore This Step</a>
 
 			</div>
 			<div class="col-lg-3 col-md-1"></div>
