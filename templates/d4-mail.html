@@ -145,65 +145,45 @@ transition: all 0.25s ease-out;
 
 
 	<div class="text-center">
-		<h4 class="card-title">Select a Destination:</h4>
+		<h4 class="card-title">Please enter an email address:</h4>
 		<br>
 
-		<div class="row mx-0">
-			<div class="col-sm-2"></div>
-			<div class="col-sm-8">
+		<div class="row">
+			<div class="col-lg-3 col-md-1"></div>
+			<div class="col-lg-6 col-md-10">
 
-				<a href="{{ url_for('mail')}}?d4_client={{d4_client}}&type={{d4_type}}&destination=default{%if os_client%}&os={{os_client}}&arch={{arch}}{%endif%}" class="btn btn-outline-dark">
-					<h5 class="card-title">D4 Official Server</h5>
-					<div class="row mx-0">
-						<div class="col-md-7">
-							<img src="{{ url_for('static', filename='img/d4-logo.png')}}" alt="D4 official Server">
-						</div>
-						<div class="col-md-5 px-md-4 mt-md-5">
-							<ul class="list-group mt-3 mb-1 text-dark">
-								<li class="list-group-item d-flex justify-content-between align-items-center active">
-									<span class="px-md-3">crq.circl.lu</span>
-								</li>
-							</ul>
-						</div>
-					</div>
+				<p>
+					TODO: explain why
+				</p>
 
-				</a>
+				<form class="form-signin" action="{{ url_for('mail')}}" method="post">
+					<input type="text" name="d4_client" class="form-control" value="{{d4_client}}" hidden>
+					<input type="text" name="type" class="form-control" value="{{d4_type}}" hidden>
+					<input type="text" name="os" class="form-control" value="{{os_client}}" hidden>
+					<input type="text" name="arch" class="form-control" value="{{arch}}" hidden>
+					<input type="text" name="destination" class="form-control" value="{{destination}}" hidden>
+
+					<div class="input-group mb-2">
+			      <div class="input-group-prepend">
+			        <div class="input-group-text"><i class="fas fa-envelope"></i></div>
+			      </div>
+			      <input type="text" class="form-control {% if error %}is-invalid{% endif %}" id="mail" name="mail" placeholder="mail address" required>
+						<div class="input-group-append">
+							<button class="btn btn-primary" type="submit" id="button-addon2"><i class="fas fa-plus"></i></button>
+						</div>
+			    </div>
+				</form>
+
+				<br>
+				<br>
+
+				<a class="btn btn-secondary" href="#">Ignore This Step</a>
 
 			</div>
-			<div class="col-sm-2"></div>
+			<div class="col-lg-3 col-md-1"></div>
 		</div>
 
 		<br>
-		<br>
-		<br>
-
-		<div class="row mx-0">
-			<div class="col-sm-5"></div>
-			<div class="col-sm-2">
-
-				<div class="card border-info">
-					<div class="card-body">
-						<h5 class="card-title">Use Another D4 Server:</h5>
-						<form class="form-signin" action="{{ url_for('destination')}}" method="post">
-							<input type="text" name="d4_client" class="form-control" value="{{d4_client}}" hidden>
-							<input type="text" name="type" class="form-control" value="{{d4_type}}" hidden>
-							<input type="text" name="os" class="form-control" value="{{os_client}}" hidden>
-							<input type="text" name="arch" class="form-control" value="{{arch}}" hidden>
-							<div class="input-group mb-3">
-					      <input type="text" id="inputDestination" name="destination" class="form-control {% if error %}is-invalid{% endif %}" placeholder="Server Address" required>
-								<div class="input-group-append">
-							    <button class="btn btn-secondary" type="submit" id="button-addon2"><i class="fas fa-plus"></i></button>
-							  </div>
-							</div>
-						</form>
-					</div>
-
-				</div>
-
-			</div>
-			<div class="col-sm-5"></div>
-		</div>
-
 		<br>
 	</div>
 

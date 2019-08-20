@@ -90,7 +90,10 @@ def get_json_type_description():
     return json_type_description.copy()
 
 def register_sensor_via_api(sensor_uuid, hmac_key, mail=None):
-    res = requests.post("{}/api/v1/add/sensor/register".format(D4_Server), json={"uuid": sensor_uuid, "hmac_key": hmac_key}, headers={'Authorization': D4_API_KEY}, verify=False)
+    json_req = {"uuid": sensor_uuid, "hmac_key": hmac_key}
+    if mail:
+        json_req['mail'] = mail
+    res = requests.post("{}/api/v1/add/sensor/register".format(D4_Server), json=json_req, headers={'Authorization': D4_API_KEY}, verify=False)
     print(res.status_code)
 
     if res.status_code == 200:
@@ -261,6 +264,30 @@ def destination():
 
     return render_template("d4-destination.html", d4_client=d4_client, d4_type=d4_type, os_client=os_client, arch=arch)
 
+@app.route('/mail', methods=['GET', 'POST'])
+def mail():
+    mail = request.form.get('mail')
+    if mail:
+        d4_client = request.form.get('d4_client')
+        destination = request.form.get('destination')
+        os_client = request.form.get('os')
+        arch = request.form.get('arch')
+        d4_type = request.form.get('type')
+
+        if not check_email(mail):
+            return render_template("d4-mail.html", d4_client=d4_client, d4_type=d4_type, os_client=os_client, arch=arch, destination=destination, error='Invalid Mail Address')
+        else:
+            return redirect(url_for('download_page', d4_client=d4_client, type=d4_type, destination=destination, mail=mail, os_client=os_client, arch=arch))
+
+    d4_client = request.args.get('d4_client')
+    d4_type = request.args.get('type')
+    os_client = request.args.get('os')
+    arch = request.args.get('arch')
+    destination = request.args.get('destination')
+
+    return render_template("d4-mail.html", d4_client=d4_client, d4_type=d4_type, os_client=os_client, arch=arch, destination=destination)
+
+
 @app.route('/download_page', methods=['GET'])
 def download_page():
     d4_client = request.args.get('d4_client')
@@ -268,7 +295,8 @@ def download_page():
     os_client = request.args.get('os')
     arch = request.args.get('arch')
     destination = request.args.get('destination')
-    return render_template("download.html", d4_client=d4_client, d4_type=d4_type, os_client=os_client, arch=arch, destination=destination)
+    mail = request.args.get('mail')
+    return render_template("download.html", d4_client=d4_client, d4_type=d4_type, os_client=os_client, arch=arch, destination=destination, mail=mail)
 
 @app.route('/download', methods=['GET'])
 def download():
@@ -286,6 +314,7 @@ def download():
     if not d4_client or not d4_type or not destination:
         return redirect(url_for('client'))
 
+
     # verify type
     ## TODO: add 254 type
     try:
@@ -294,8 +323,6 @@ def download():
             return redirect(url_for('client'))
     except:
         return redirect(url_for('client'))
-
-
 
     UUID = generate_uuid()
     key = generate_secret_key()
@@ -324,7 +351,7 @@ def download():
 
     # register sensor
     if destination == 'default':
-        register_sensor_via_api(UUID, key)
+        register_sensor_via_api(UUID, key, mail)
 
     return send_file(zip_file, attachment_filename=filename, as_attachment=True)
 
