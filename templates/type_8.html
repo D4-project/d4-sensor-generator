@@ -1,9 +1,9 @@
 Here are some quick tips about how to use the d4-client for Passive DNS collection:</br></br>
-Unzip the archive and move to its location then enter:
+Unzip the archive, move to its location and then enter:
 <p>
     <code>
         {%- if d4_client == 'go' -%}
-        #passivedns -i eth0 -l /dev/stdout | {{"./d4-goclient_%s_%s"%(os_client, arch)}} -c
+        #passivedns -i eth0 -l /dev/stdout | {{"./d4-goclient_%s_%s"%(os_client, arch)}} -c configs
         {%- endif %}
 
         {%- if d4_client == 'c' and destination == 'default' -%}
