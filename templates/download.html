@@ -35,13 +35,20 @@
 			<div class="col-sm-8">
 
 				<p>
-					Explain how to use it
+					Congratulations you successfully created a d4 client.
+					Press the "Download D4-Client" below to download the corresponding zip archive:
 				</p>
 
 				<a href="{{ url_for('download')}}?d4_client={{d4_client}}&type={{d4_type}}&destination={{destination}}{%if mail%}&mail={{mail}}{%endif%}{%if os_client%}&os={{os_client}}&arch={{arch}}{%endif%}" class="btn btn-primary">
 					<img src="{{ url_for('static', filename='img/d4-logo.png')}}" alt="Download client" style="width:40px;">
 					Download D4-Client
 				</a>
+
+				<br>
+				<p>
+					<br>
+				{% include "type_%s.html"%(d4_type) ignore missing %}
+				</p>
 
 			</div>
 			<div class="col-sm-2"></div>
