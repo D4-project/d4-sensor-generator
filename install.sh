@@ -23,14 +23,14 @@ fi
 
 pushd configs
   cp server.conf.sample server.conf
-pop
+popd
 
 mkdir logs
 
 pushd d4-goclient
 gox -output="../exe_goclient/d4-goclient_{{.OS}}_{{.Arch}}"
 sleep 5
-pop
+popd
 
 pushd exe_goclient
 find . -type f -exec sha256sum {} \; > ../sha256sum.txt
