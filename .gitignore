@@ -122,3 +122,6 @@ static
 #redis
 redis
 dump7201.rdb
+
+#PyCharm
+.idea
