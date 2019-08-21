@@ -1,0 +1,18 @@
+Here are some quick tips about how to use the d4-client for PCAP collection:</br></br>
+Unzip the archive, move to its location and then enter:
+<p>
+    <code>
+        {%- if d4_client == 'go' -%}
+        #tcpdump -n -s0 -w | {{"./d4-goclient_%s_%s"%(os_client, arch)}} -c configs
+        {%- endif %}
+
+        {%- if d4_client == 'c' and destination == 'default' -%}
+        #tcpdump -n -s0 -w - | ./d4 -c configs | socat - OPENSSL-CONNECT:crq.circl.lu:4443,verify=0
+        {%- endif %}
+
+        {%- if d4_client == 'c' and destination != 'default' -%}
+        #tcpdump -n -s0 -w - | ./d4 -c configs | socat - OPENSSL-CONNECT:{{ destination }}:4443,verify=0
+        {%- endif %}
+    </code>
+</p>
+You may find <a href="https://d4-project.org/2019/06/17/sharing-between-D4-sensors.html">this blog post</a> valuable.

@@ -1,0 +1,23 @@
+Here are some quick tips about how to use the d4-client for custom-type applications:</br></br>
+Unzip the archive, move to its location and edit the metaheader.json file:
+
+<p>
+    <code>
+        ja3jl= b'{"type": "ja3-jl", "encoding": "utf-8", "tags": ["tlp:white"]}'
+    </code>
+</p>
+By default, the config generator creates a boilerplate for <a
+        href="https://github.com/D4-project/sensor-d4-tls-fingerprinting">D4's
+    passiveSSL</a>, by you change it to match your application needs.</br>
+
+<p>
+Then launch your application and pipe its outputs to d4, for instance for passiveSSL:
+</p>
+
+<p>
+    <code>
+        {%- if d4_client == 'go' -%}
+        #./d4-tlsf-amd64l -i eth0 | {{"./d4-goclient_%s_%s"%(os_client, arch)}} -c configs
+        {%- endif %}
+    </code>
+</p>

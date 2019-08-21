@@ -141,6 +141,7 @@ def create_config_file(UUID, d4_type, destination, key, d4_client='go', os_clien
     snaplen = b'4096'
     version = b'1'
     source = b'stdin'
+    ja3jl= b'{"type": "ja3-jl", "encoding": "utf-8", "tags": ["tlp:white"]}'
 
     ## TODO: add 254 type
     try:
@@ -181,6 +182,7 @@ def create_config_file(UUID, d4_type, destination, key, d4_client='go', os_clien
         zf.writestr( '{}/configs/type'.format(dirname), BytesIO(str(d4_type).encode()).getvalue())
         zf.writestr( '{}/configs/uuid'.format(dirname), BytesIO(UUID.encode()).getvalue())
         zf.writestr( '{}/configs/version'.format(dirname), BytesIO(version).getvalue())
+        zf.writestr( '{}/configs/metaheader.json'.format(dirname), BytesIO(ja3jl).getvalue())
 
         if compiled_file:
             with open(compiled_file, 'rb') as fcomp:
