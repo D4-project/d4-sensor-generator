@@ -16,6 +16,14 @@ python3 -m pip install -r requirement.txt
 
 if [ ! -d d4-core ]; then
   git clone https://github.com/D4-project/d4-core.git
+  pushd d4-core
+  pushd client
+  git submodule init
+  git submodule update
+  make
+  sleep 5
+  popd
+  popd
 fi
 if [ ! -d d4-goclient ]; then
   git clone https://github.com/D4-project/d4-goclient.git
