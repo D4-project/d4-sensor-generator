@@ -36,7 +36,7 @@ root.addHandler(handler_log)
 from io import BytesIO
 import zipfile
 
-from flask import Flask, render_template, jsonify, request, Blueprint, redirect, url_for, send_file
+from flask import Flask, render_template, jsonify, request, Blueprint, redirect, url_for, send_file, escape
 
 baseUrl = ''
 if baseUrl != '':
@@ -57,6 +57,19 @@ with open(json_type_description_path, 'r') as f:
 json_type_description = {}
 for type_info in json_type:
     json_type_description[type_info['type']] = type_info
+
+host_redis = config_server['Redis_DB'].get('host')
+port_redis = config_server['Redis_DB'].getint('port')
+redis_server = redis.StrictRedis(
+                    host=host_redis,
+                    port=port_redis,
+                    db=0)
+
+try:
+    redis_server.ping()
+except redis.exceptions.ConnectionError:
+    print('Error: Redis server {}:{}, ConnectionError'.format(host_redis, port_redis))
+    sys.exit(1)
 
 app = Flask(__name__, static_url_path=baseUrl+'/static/')
 app.config['MAX_CONTENT_LENGTH'] = 900 * 1024 * 1024
@@ -93,13 +106,47 @@ def register_sensor_via_api(sensor_uuid, hmac_key, mail=None):
     json_req = {"uuid": sensor_uuid, "hmac_key": hmac_key}
     if mail:
         json_req['mail'] = mail
-    res = requests.post("{}/api/v1/add/sensor/register".format(D4_Server), json=json_req, headers={'Authorization': D4_API_KEY}, verify=False)
-    print(res.status_code)
 
-    if res.status_code == 200:
-        root.info('Sensor registred, uuid: {}'.format(sensor_uuid))
-    else:
-        root.error(res.json())
+    try:
+        res = requests.post("{}/api/v1/add/sensor/register".format(D4_Server), json=json_req, headers={'Authorization': D4_API_KEY}, verify=False)
+        print(res.status_code)
+
+        if res.status_code == 200:
+            root.info('Sensor registred, uuid: {}'.format(sensor_uuid))
+            return True
+        else:
+            root.error(res.json())
+            return False
+
+    except requests.exceptions.ConnectionError:
+        root.error('D4 API: Connection refused')
+        return False
+
+def save_sensor_registration(UUID, key, registred, d4_client, d4_type, destination, mail=None, os_client=None, arch=None):
+    UUID = UUID.replace('-', '')
+    # check if uuid not already exist
+    if not redis_server.exists('downloaded_uuid:{}'.format(UUID)):
+
+        date_day = datetime.datetime.now().strftime("%Y%m%d")
+        registration_time = time.time()
+
+        if destination == 'default':
+            redis_server.hset('downloaded_uuid:{}'.format(UUID), 'time', registration_time)
+            redis_server.hset('downloaded_uuid:{}'.format(UUID), 'key', key)
+            if mail:
+                redis_server.hset('downloaded_uuid:{}'.format(UUID), 'mail', mail)
+            if registred:
+                redis_server.sadd('registred_sensor:{}'.format(date_day), UUID)
+                redis_server.zincrby('registred_sensor', 1, date_day)
+            else:
+                redis_server.sadd('not_registred_sensor:{}'.format(date_day), UUID)
+                redis_server.zincrby('not_registred_sensor', 1, date_day)
+
+        redis_server.zincrby('stats_client', 1, d4_client)
+        redis_server.zincrby('stats_type', 1, d4_type)
+        if os_client and arch:
+            redis_server.zincrby('stats_os_client', 1, os_client)
+            redis_server.zincrby('stats_arch', 1, arch)
 
 def create_go_client_zip():
 
@@ -327,7 +374,7 @@ def download():
         return redirect(url_for('client'))
 
     UUID = generate_uuid()
-    key = generate_secret_key()
+    key = escape(generate_secret_key())
 
     filename = 'd4-sensor-client.zip'
 
@@ -353,7 +400,11 @@ def download():
 
     # register sensor
     if destination == 'default':
-        register_sensor_via_api(UUID, key, mail)
+        registred = register_sensor_via_api(UUID, key, mail)
+    else:
+     registred = False
+
+    save_sensor_registration(UUID, key, registred, d4_client, d4_type, destination, mail=mail, os_client=os_client, arch=arch)
 
     return send_file(zip_file, attachment_filename=filename, as_attachment=True)
 
