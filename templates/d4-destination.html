@@ -103,12 +103,12 @@ transition: all 0.25s ease-out;
 <body>
 
 	<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-		<a class="navbar-brand" href="{{ url_for('index') }}">
+		<a class="navbar-brand" href="{{ url_for('root.index') }}">
       <img src="{{ url_for('static', filename='img/d4-logo.png')}}" alt="D4 Project" style="width:80px;">
     </a>
 	  <ul class="navbar-nav">
 	    <li class="nav-item active">
-	      <a class="nav-link mr-3" href="{{ url_for('index') }}">Home <span class="sr-only">(current)</span></a>
+	      <a class="nav-link mr-3" href="{{ url_for('root.index') }}">Home <span class="sr-only">(current)</span></a>
 	    </li>
 	  </ul>
 	</nav>
@@ -152,7 +152,7 @@ transition: all 0.25s ease-out;
 			<div class="col-sm-2"></div>
 			<div class="col-sm-8">
 
-				<a href="{{ url_for('mail')}}?d4_client={{d4_client}}&type={{d4_type}}&destination=default{%if os_client%}&os={{os_client}}&arch={{arch}}{%endif%}" class="btn btn-outline-dark">
+				<a href="{{ url_for('root.mail')}}?d4_client={{d4_client}}&type={{d4_type}}&destination=default{%if os_client%}&os={{os_client}}&arch={{arch}}{%endif%}" class="btn btn-outline-dark">
 					<h5 class="card-title">D4 Official Server</h5>
 					<div class="row mx-0">
 						<div class="col-md-7">
@@ -184,7 +184,7 @@ transition: all 0.25s ease-out;
 				<div class="card border-info">
 					<div class="card-body">
 						<h5 class="card-title">Use Another D4 Server:</h5>
-						<form class="form-signin" action="{{ url_for('destination')}}" method="post">
+						<form class="form-signin" action="{{ url_for('root.destination')}}" method="post">
 							<input type="text" name="d4_client" class="form-control" value="{{d4_client}}" hidden>
 							<input type="text" name="type" class="form-control" value="{{d4_type}}" hidden>
 							<input type="text" name="os" class="form-control" value="{{os_client}}" hidden>

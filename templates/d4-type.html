@@ -103,12 +103,12 @@ transition: all 0.25s ease-out;
 <body>
 
 	<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-		<a class="navbar-brand" href="{{ url_for('index') }}">
+		<a class="navbar-brand" href="{{ url_for('root.index') }}">
       <img src="{{ url_for('static', filename='img/d4-logo.png')}}" alt="D4 Project" style="width:80px;">
     </a>
 	  <ul class="navbar-nav">
 	    <li class="nav-item active">
-	      <a class="nav-link mr-3" href="{{ url_for('index') }}">Home <span class="sr-only">(current)</span></a>
+	      <a class="nav-link mr-3" href="{{ url_for('root.index') }}">Home <span class="sr-only">(current)</span></a>
 	    </li>
 	  </ul>
 	</nav>
@@ -152,7 +152,7 @@ transition: all 0.25s ease-out;
 			<div class="col-sm-8">
 				<div class="list-group">
 					{% for elem in json_type_description %}
-						<a href="{{ url_for('destination') }}?d4_client={{d4_client}}&type={{json_type_description[elem]['type']}}{%if os_client%}&os={{os_client}}&arch={{arch}}{%endif%}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center text-dark">
+						<a href="{{ url_for('root.destination') }}?d4_client={{d4_client}}&type={{json_type_description[elem]['type']}}{%if os_client%}&os={{os_client}}&arch={{arch}}{%endif%}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center text-dark">
 							{{json_type_description[elem]['description']}}
 							<span class="badge badge-primary badge-pill">{{json_type_description[elem]['type']}}</span>
 						</a>

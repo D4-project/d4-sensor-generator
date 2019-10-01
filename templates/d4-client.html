@@ -103,12 +103,12 @@ transition: all 0.25s ease-out;
 <body>
 
 	<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-		<a class="navbar-brand" href="{{ url_for('index') }}">
+		<a class="navbar-brand" href="{{ url_for('root.index') }}">
       <img src="{{ url_for('static', filename='img/d4-logo.png')}}" alt="D4 Project" style="width:80px;">
     </a>
 	  <ul class="navbar-nav">
 	    <li class="nav-item active">
-	      <a class="nav-link mr-3" href="{{ url_for('index') }}">Home <span class="sr-only">(current)</span></a>
+	      <a class="nav-link mr-3" href="{{ url_for('root.index') }}">Home <span class="sr-only">(current)</span></a>
 	    </li>
 	  </ul>
 	</nav>
@@ -149,7 +149,7 @@ transition: all 0.25s ease-out;
 				<h4 class="card-title">Choose a D4-Client</h4>
 				<div class="row mx-0">
 					<div class="col-lg-6 text-center mt-4">
-						<a href="{{ url_for('type')}}?d4_client=c" class="btn btn-outline-dark">
+						<a href="{{ url_for('root.type')}}?d4_client=c" class="btn btn-outline-dark">
 							<img src="{{ url_for('static', filename='img/d4c-client.png')}}" alt="Go Client">
 
 							<ul class="list-group mt-3 mb-1 text-dark">
@@ -163,7 +163,11 @@ transition: all 0.25s ease-out;
 							  </li>
 							  <li class="list-group-item d-flex justify-content-between align-items-center">
 							    Pre-compiled client
-							    <span class="badge badge-info badge-pill"><i class="fas fa-times"></i></span>
+							    <span class="badge badge-danger badge-pill"><i class="fas fa-times"></i></span>
+							  </li>
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+							    Auto reconnect:
+							    <span class="badge badge-danger badge-pill"><i class="fas fa-times"></i></span>
 							  </li>
 							</ul>
 
@@ -171,7 +175,7 @@ transition: all 0.25s ease-out;
 
 					</div>
 					<div class="col-lg-6 text-center mt-4">
-						<a href="{{ url_for('go_client')}}?d4_client=go" class="btn btn-outline-dark">
+						<a href="{{ url_for('root.go_client')}}?d4_client=go" class="btn btn-outline-dark">
 							<img src="{{ url_for('static', filename='img/gopherd4.png')}}" alt="Go Client">
 
 							<ul class="list-group mt-3 mb-1 text-dark">
@@ -185,7 +189,11 @@ transition: all 0.25s ease-out;
 							  </li>
 							  <li class="list-group-item d-flex justify-content-between align-items-center">
 							    Pre-compiled versions:
-							    <span class="badge badge-info badge-pill"><i class="fas fa-check"></i></span>
+							    <span class="badge badge-success badge-pill"><i class="fas fa-check"></i></span>
+							  </li>
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+							    Auto reconnect:
+							    <span class="badge badge-success badge-pill"><i class="fas fa-check"></i></span>
 							  </li>
 							</ul>
 						</a>

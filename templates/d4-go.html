@@ -114,12 +114,12 @@ transition: all 0.25s ease-out;
 <body>
 
 	<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-		<a class="navbar-brand" href="{{ url_for('index') }}">
+		<a class="navbar-brand" href="{{ url_for('root.index') }}">
       <img src="{{ url_for('static', filename='img/d4-logo.png')}}" alt="D4 Project" style="width:80px;">
     </a>
 	  <ul class="navbar-nav">
 	    <li class="nav-item active">
-	      <a class="nav-link mr-3" href="{{ url_for('index') }}">Home <span class="sr-only">(current)</span></a>
+	      <a class="nav-link mr-3" href="{{ url_for('root.index') }}">Home <span class="sr-only">(current)</span></a>
 	    </li>
 	  </ul>
 	</nav>
@@ -177,7 +177,7 @@ transition: all 0.25s ease-out;
 							<div id="collapse{{elem}}" class="collapse" aria-labelledby="heading{{elem}}" data-parent="#accordion">
 								<div class="card-body">
 										{% for arch in dict_go_exe[elem] %}
-											<a href="{{ url_for('type') }}?d4_client=go&os={{elem}}&arch={{arch}}" class="btn btn-secondary mb-1">
+											<a href="{{ url_for('root.type') }}?d4_client=go&os={{elem}}&arch={{arch}}" class="btn btn-secondary mb-1">
 												{{arch}}
 											</a>
 										{% endfor %}
@@ -193,7 +193,7 @@ transition: all 0.25s ease-out;
 
 			<div class="col-md-2"></div>
 		</div>
-		<a href="{{ url_for('type') }}?d4_client=go" class="btn btn-outline-dark mb-1">
+		<a href="{{ url_for('root.type') }}?d4_client=go" class="btn btn-outline-dark mb-1">
 			I don't want a pre-compiled client
 		</a>
 

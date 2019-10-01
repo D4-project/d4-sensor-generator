@@ -5,3 +5,7 @@ D4_Server = https://localhost:7000
 [Redis_DB]
 host = localhost
 port = 7201
+
+
+[Server]
+baseUrl = /
