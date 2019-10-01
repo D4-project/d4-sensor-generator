@@ -102,10 +102,12 @@ def check_email(email):
 def get_json_type_description():
     return json_type_description.copy()
 
-def register_sensor_via_api(sensor_uuid, hmac_key, mail=None):
+def register_sensor_via_api(sensor_uuid, hmac_key, mail=None, third_party=False):
     json_req = {"uuid": sensor_uuid, "hmac_key": hmac_key}
     if mail:
         json_req['mail'] = mail
+    if third_party:
+        json_req['third_party'] = True
 
     try:
         res = requests.post("{}/api/v1/add/sensor/register".format(D4_Server), json=json_req, headers={'Authorization': D4_API_KEY}, verify=False)
@@ -122,7 +124,7 @@ def register_sensor_via_api(sensor_uuid, hmac_key, mail=None):
         root.error('D4 API: Connection refused')
         return False
 
-def save_sensor_registration(UUID, key, registred, d4_client, d4_type, destination, mail=None, os_client=None, arch=None):
+def save_sensor_registration(UUID, key, registred, d4_client, d4_type, destination, mail=None, os_client=None, arch=None, third_party=False):
     UUID = UUID.replace('-', '')
     # check if uuid not already exist
     if not redis_server.exists('downloaded_uuid:{}'.format(UUID)):
@@ -135,6 +137,8 @@ def save_sensor_registration(UUID, key, registred, d4_client, d4_type, destinati
             redis_server.hset('downloaded_uuid:{}'.format(UUID), 'key', key)
             if mail:
                 redis_server.hset('downloaded_uuid:{}'.format(UUID), 'mail', mail)
+            if third_party:
+                redis_server.hset('downloaded_uuid:{}'.format(UUID), 'third_party', 'True')
             if registred:
                 redis_server.sadd('registred_sensor:{}'.format(date_day), UUID)
                 redis_server.zincrby('registred_sensor', 1, date_day)
@@ -322,19 +326,35 @@ def mail():
         os_client = request.form.get('os')
         arch = request.form.get('arch')
         d4_type = request.form.get('type')
+        third_party = request.form.get('third_party')
+        if third_party is None:
+            third_party = False
+        else:
+            if third_party=='True':
+                third_party = True
+            else:
+                third_party = False
 
         if not check_email(mail):
-            return render_template("d4-mail.html", d4_client=d4_client, d4_type=d4_type, os_client=os_client, arch=arch, destination=destination, error='Invalid Mail Address')
+            return render_template("d4-mail.html", d4_client=d4_client, d4_type=d4_type, os_client=os_client, arch=arch, destination=destination, third_party=third_party, error='Invalid Mail Address')
         else:
-            return redirect(url_for('download_page', d4_client=d4_client, type=d4_type, destination=destination, mail=mail, os_client=os_client, arch=arch))
+            return redirect(url_for('download_page', d4_client=d4_client, type=d4_type, destination=destination, mail=mail, os_client=os_client, arch=arch, third_party=third_party))
 
     d4_client = request.args.get('d4_client')
     d4_type = request.args.get('type')
     os_client = request.args.get('os')
     arch = request.args.get('arch')
     destination = request.args.get('destination')
+    third_party = request.args.get('third_party')
+    if third_party is None:
+        third_party = False
+    else:
+        if third_party=='True':
+            third_party = False
+        else:
+            third_party = True
 
-    return render_template("d4-mail.html", d4_client=d4_client, d4_type=d4_type, os_client=os_client, arch=arch, destination=destination)
+    return render_template("d4-mail.html", d4_client=d4_client, d4_type=d4_type, os_client=os_client, arch=arch, destination=destination,third_party=third_party)
 
 
 @app.route('/download_page', methods=['GET'])
@@ -345,7 +365,8 @@ def download_page():
     arch = request.args.get('arch')
     destination = request.args.get('destination')
     mail = request.args.get('mail')
-    return render_template("download.html", d4_client=d4_client, d4_type=d4_type, os_client=os_client, arch=arch, destination=destination, mail=mail)
+    third_party = request.args.get('third_party')
+    return render_template("download.html", d4_client=d4_client, d4_type=d4_type, os_client=os_client, arch=arch, destination=destination, mail=mail, third_party=third_party)
 
 @app.route('/download', methods=['GET'])
 def download():
@@ -356,6 +377,11 @@ def download():
     d4_type = request.args.get('type')
     destination = request.args.get('destination')
     mail = request.args.get('mail')
+    third_party = request.args.get('third_party', False)
+    if third_party == 'True':
+        third_party = True
+    else:
+        third_party = False
 
     os_client = request.args.get('os')
     arch = request.args.get('arch')
@@ -400,11 +426,11 @@ def download():
 
     # register sensor
     if destination == 'default':
-        registred = register_sensor_via_api(UUID, key, mail)
+        registred = register_sensor_via_api(UUID, key, mail, third_party=third_party)
     else:
      registred = False
 
-    save_sensor_registration(UUID, key, registred, d4_client, d4_type, destination, mail=mail, os_client=os_client, arch=arch)
+    save_sensor_registration(UUID, key, registred, d4_client, d4_type, destination, mail=mail, os_client=os_client, arch=arch, third_party=third_party)
 
     return send_file(zip_file, attachment_filename=filename, as_attachment=True)
 

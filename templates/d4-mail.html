@@ -169,15 +169,22 @@ transition: all 0.25s ease-out;
 			      </div>
 			      <input type="text" class="form-control {% if error %}is-invalid{% endif %}" id="mail" name="mail" placeholder="mail address" required>
 						<div class="input-group-append">
-							<button class="btn btn-primary" type="submit" id="button-addon2"><i class="fas fa-plus"></i></button>
+							<button class="btn btn-primary" type="submit" id="button-addon2"><i class="fas fa-plus"></i> Use This mail</button>
 						</div>
 			    </div>
+
+					<br>
+
+					<div class="custom-control custom-switch mt-6">
+					  <input type="checkbox" class="custom-control-input" name="third_party" id="third_party" {%if third_party%}checked value="True"{%else%}value=""{%endif%} onclick="window.location.href ='{{ url_for('mail')}}?d4_client={{d4_client}}&type={{d4_type}}&destination={{destination}}{%if os_client%}&os={{os_client}}&arch={{arch}}{%endif%}&third_party='+$('#third_party').val();">
+					  <label class="custom-control-label" for="third_party">I want to share with third party</label>
+					</div>
 				</form>
 
 				<br>
-				<br>
 
-				<a class="btn btn-secondary" href="{{ url_for('download_page')}}?d4_client={{d4_client}}&type={{d4_type}}&destination={{destination}}{%if os_client%}&os={{os_client}}&arch={{arch}}{%endif%}">Ignore This Step</a>
+				<a class="btn btn-outline-secondary" href="{{ url_for('download_page')}}?d4_client={{d4_client}}&type={{d4_type}}&destination={{destination}}{%if os_client%}&os={{os_client}}&arch={{arch}}{%endif%}&third_party={{third_party}}">
+					I don't want to provide a Mail</a>
 
 			</div>
 			<div class="col-lg-3 col-md-1"></div>
