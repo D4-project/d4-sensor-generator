@@ -369,7 +369,7 @@ def mail():
 def download_page():
     d4_client = request.args.get('d4_client')
     d4_type = request.args.get('type')
-    os_client = request.args.get('os')
+    os_client = request.args.get('os_client')
     arch = request.args.get('arch')
     destination = request.args.get('destination')
     mail = request.args.get('mail')
@@ -424,6 +424,7 @@ def download():
         zip_file0= create_c_client_zip()
     else:
         zip_file0= create_go_client_zip()
+
     zip_file= create_config_file(UUID, d4_type, destination, key, d4_client=d4_client, os_client=os_client, arch=arch)
 
     with zipfile.ZipFile(zip_file0, "a") as zf:
