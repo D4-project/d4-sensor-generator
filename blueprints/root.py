@@ -25,7 +25,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 import logging
 import logging.handlers
 
-root = logging.getLogger()
+root_log = logging.getLogger()
 
 log_filename = 'logs/sensor-generator.log'
 handler = logging.StreamHandler(sys.stdout)
@@ -35,7 +35,7 @@ handler_log = logging.handlers.TimedRotatingFileHandler(log_filename, when="midn
 handler_log.suffix = '%Y-%m-%d.log'
 handler_log.setFormatter(formatter)
 handler_log.setLevel(logging.DEBUG)
-root.addHandler(handler_log)
+root_log.addHandler(handler_log)
 
 from io import BytesIO
 import zipfile
@@ -117,14 +117,14 @@ def register_sensor_via_api(sensor_uuid, hmac_key, mail=None, third_party=False)
         print(res.status_code)
 
         if res.status_code == 200:
-            root.info('Sensor registred, uuid: {}'.format(sensor_uuid))
+            root_log.info('Sensor registred, uuid: {}'.format(sensor_uuid))
             return True
         else:
-            root.error(res.json())
+            root_log.error(res.json())
             return False
 
     except requests.exceptions.ConnectionError:
-        root.error('D4 API: Connection refused')
+        root_log.error('D4 API: Connection refused')
         return False
 
 def save_sensor_registration(UUID, key, registred, d4_client, d4_type, destination, mail=None, os_client=None, arch=None, third_party=False):
@@ -418,7 +418,7 @@ def download():
     if os_client:
         message = message + ', os:{}, arch:{}'.format(os_client, arch)
 
-    root.warning(message)
+    root_log.warning(message)
 
     if d4_client=='c':
         zip_file0= create_c_client_zip()
